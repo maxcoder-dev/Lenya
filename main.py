@@ -11,137 +11,8 @@ import psutil
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from docx import Document
-
-# ==============================
-# Настройки голосового помощника
-# ==============================
-opts = {
-    'alias': ('леня', 'лёня', 'лёнь', 'леонид', 'леша', 'лёнечка', 'линь', 'лёшаня', 'лешаня'),
-    'tbr': ('скажи', 'покажи', 'расскажи', 'сколько', 'произнеси', 'похвастайся', 'сделай', 'расскажи'),
-    'cmds': {
-        'ctime': (
-            'текущее время', 'сейчас времени', 'который час', 'сколько сейчас часов', 'время сейчас'
-        ),
-        'youtube': (
-            'включи ютуб', 'го ютуб', 'ютуб', 'чекнуть ютуб', 'ютюбик', 'го ютубчик',
-            'чекнуть ютубчик', 'ютубчик', 'youtube', 'открой youtube'
-        ),
-        'lichess': (
-            'го шахматы', 'играть в шахматы', 'играть в чесс', 'играть в чес', 'погнали на личесс',
-            'го на личес', 'шахматы', 'шахматюга', 'игра шахматы', 'шахматы играть',
-            'открой шахматы', 'открой личес', 'открой личесс', 'открой ш'
-        ),
-        'explorer': (
-            'проводник', 'файлы', 'открой проводник', 'открой файлы', 'открой файл'
-        ),
-        'browser': (
-            'firefox', 'открой браузер', 'браузер', 'го браузер', 'вруби браузер', 'вруби firefox'
-        ),
-        'music': (
-            'вруби музон', 'музыка', 'музон', 'go музон', 'врубай музон', 'давай музыку', 'музыку', 'вырубай музон'
-        ),
-        'github': (
-            'го гитхаб', 'гитхаб', 'открой гитхаб', 'открой github', 'го github', 'go github', 'github'
-        ),
-        'talk': (
-            'как дела', 'как ты', 'как у тебя дела', 'как ты сегодня', 'как у тебя дела сегодня',
-            'как делишки', 'как сегодня у тебя дела?'
-        ),
-        'exit': (
-            'выход', 'выйти', 'отмена', 'отменить', 'выходить', 'выйти из программы', 'выход из программы', 'отменить программу'
-        ),
-        'weather': (
-            'погода', 'погода в москве', 'погода сегодня', 'сегодня погода', 'прогноз погоды', 'прогноз погода', 'прогноз погоды в москве',
-            'погода в городе', 'погода сейчас'
-        ),
-
-        'hey': (
-            'привет', 'ку', 'пр', 'здорово', 'здарова', 'привет леня', 'привет леонид', 'ку-ку'
-        ),
-        'comment_hard': (   #Будет работать не только на hard.
-            'ты тупой', 'ты ужасный', 'ты плохой', 'плохой', 'ужасный', 'тупой', 'дибил', 'ты дибил', 'ты ужастен', 'ты не красивый',
-            'ты очень плохой', 'ты очень ужасный', 'ты очень тупой', 'ты очень дибил', 'ты слишком ужастный', 'ты слишком плохой', 'ты слишком плох',
-            'ты слишком тупой', 'ты слишком туп', 'ты очень туп', 'ты слишком дибильный'
-        ),
-        'chessbase': (
-            'открой chessbase', 'открой чесбэйз', 'открой базу', 'го базу', 'давай чесбэйз', 'давай chessbase',
-            'открой чесбэйс', 'давай чесбэйс'
-        ),
-        'dispz': (
-            'открой диспетчер задач', 'диспетчер задач', 'го диспетчер задач', 'открой диспетчер задач, пожаоуйста',
-            'диспетчер задач открыть', 'отрыть диспетчер задач'
-        ),
-        'pycharm': (
-            'открой вскод', 'открой vscode', 'го vscode', 'go vscode', 'go вскод', 'го вскод',
-            'vscode', 'вскод', 'го кодить', 'хочу кодить', 'кодинг', 'код', 'го кодинг', 'питон', 'пайтон',
-            'python'
-        ),
-        'nomer': (
-            'как решить номер', 'как решить тот номер', 'реши номер 235', 'го решим номер 235'
-        ),
-        'zoom': (
-            'зум', 'zoom', 'открой зум', 'открой zoom', 'давай zoom', 'давай зум', 'го zoom', 'го зум',
-            'открыть zoom', 'открыть зум'
-        ),
-        'discord': (
-            'дискорд', 'discord', 'открой дискорд', 'открой discord', 'го дискорд', 'го discord', 'го в дискорд', 'го в discord',
-            'дс', 'ds', 'открой дс', 'открой ds', 'го дс', 'го ds', 'го в дс', 'го в ds'
-        ),
-        'calc': (
-            'калькулятор', 'сколько будет', 'а сколько', 'а сколько будет', 'сколько'
-        ),
-        'timer': (
-            'установить таймер', 'установи таймер', 'таймер', 'го таймер'
-        ),
-        'thank_u': (
-            'пасиб', 'пасиба', 'спасибо', 'спасибо, Бест!', 'спс', 'спасибки'
-        ),
-
-        'strax': (
-            'страх', 'страшно', 'маме страшно', 'страшно маме'
-        ),
-
-        'gg_browser': (
-            'закрой браузер', 'закрой файрфокс', 'закрыть броузер'
-        ),
-        'docx': (
-            'прочитай', 'прочитай ворд', 'прочитай word', 'прочитай world', 'го читать', 'читать', 'читай', 'прочти', 'прочти word', 'прочти ворд'
-        )
-    }
-}
-
-# ==============================
-# Реплики
-# ==============================
-bot_rand_replic_talk = [
-    'У меня все хорошо. Как я могу помочь тебе сегодня?',
-    'У меня все отлично, как всегда. Чем тебе помочь?',
-    'У меня все как обычно, скучаю на AMD Ryzen 5. Чем могу быть полезен?',
-    'У меня все как всегда... Вирусы, антивирусы, браузеры... А как у тебя?',
-    'Все хорошо. Сижу тут, жду команды.'
-]
-
-bot_rand_replic_hey = [
-    'Привет, кожанный',
-    'Привет, Макс! Как дела?',
-    'Привет, Бест!',
-    'Хэй, кожанный',
-    'Привет, человек!'
-]
-
-#Отвечаем на "Лёня, ты..."
-
-bot_rand_replic_hard = [
-    'Очень тонкое замечание, сэр',
-    'Очень тонкое замечание, Макс'
-]
-
-bot_rand_replic_pycharm = [
-    'Открываю pycharm. Приятного кодинга!',
-    'Хорошего кодинга!',
-    'Открываю pycharm, хорошо покодить!',
-    'Хорошо, удачи в кодинге!'
-]
+import replics as rep
+import requests
 
 # ==============================
 # Инициализация голосового движка с поддержкой OneCore (Pavel)
@@ -182,7 +53,7 @@ def run_timer(seconds):
 # ==============================
 def recognize_cmd(cmd):
     result = {'cmd': '', 'percent': 0}
-    for c, variants in opts['cmds'].items():
+    for c, variants in rep.opts['cmds'].items():
         for v in variants:
             score = fuzz.ratio(cmd, v)
             if score > result['percent']:
@@ -197,8 +68,6 @@ def execute_cmd(cmd):
     if cmd == 'ctime':
         now = datetime.datetime.now()
         speak(f'Сейчас {now.hour}:{now.minute:02d}')
-
-    elif cmd == 'youtube':
         speak('Открываю YouTube')
         os.system('start https://youtube.com')
 
@@ -223,18 +92,18 @@ def execute_cmd(cmd):
         os.system('start https://github.com')
 
     elif cmd == 'talk':
-        speak(random.choice(bot_rand_replic_talk))
+        speak(random.choice(rep.bot_rand_replic_talk))
     elif cmd == 'hey':
-        speak(random.choice(bot_rand_replic_hey))
+        speak(random.choice(rep.bot_rand_replic_hey))
 
     elif cmd == 'exit':
         speak('Хорошо, пока!')
         stop_listening(wait_for_stop=False)
         sys.exit(0)
     elif cmd == 'strax':
-        speak('Спакуха, Мариша, Так и должно быть. (доказано Лёней)')
+        bot_rand_name2 = random.choice(rep.bot_rand_name)
+        speak(f'Спакуха, {bot_rand_name2}, Так и должно быть. (доказано Лёней)')   #Рандомное имя
     elif cmd == 'weather':
-        import requests
 
         city = 'Москва'
         api_key = '79d1ca96933b0328e1c7e3e7a26cb347'
@@ -262,7 +131,7 @@ def execute_cmd(cmd):
             speak('Очень сильный мороз! Надень тёплую зимнюю одежду, шарф и перчатки. Будь аккуратнее на улице.')
 
     elif cmd == 'comment_hard':
-        speak(random.choice(bot_rand_replic_hard))
+        speak(random.choice(rep.bot_rand_replic_hard))
 
     elif cmd == 'chessbase':
         speak('Открываю ChessBase')
@@ -271,7 +140,9 @@ def execute_cmd(cmd):
     elif cmd == 'dispz':
         speak('Открываю Диспетчер задач')
         os.system('start taskmgr')
-    elif cmd == 'pycharm':
+    elif cmd == 'info':
+        speak('Я - голосовой ассистент Лёня и могу много всего. Прочитать войну и мир, открыть ютубчик и пожелать приятного просмотра, дать советы как одется сегодня и многое другое.')
+    elif cmd == 'code':
         speak('Открываю ВСкод')
         path_pycharm = r'C:\Users\Max\AppData\Local\Programs\Microsoft VS Code\Code.exe'
         os.system(f'"{path_pycharm}"')
@@ -320,7 +191,7 @@ def execute_cmd(cmd):
                 speak(f'Таймер запущен на {seconds} секунд')
                 threading.Thread(target=run_timer, args=(seconds,), daemon=True).start()
             else:
-                speak('Нулевой таймер не имеет смысла')
+                   speak('Нулевой таймер не имеет смысла')
         except Exception:
             speak('Не удалось распознать число')
     elif cmd == 'thank_u':
@@ -333,6 +204,7 @@ def execute_cmd(cmd):
                 process.kill()
     elif cmd == 'docx':
         speak("Хорошо")
+        speak("Выбери документ, который нужно прочитать в открывшимся проводнике.")
         def read_word_file():
             Tk().withdraw()  # скрыть окно Tkinter
             file_path = askopenfilename(
@@ -380,11 +252,11 @@ def execute_cmd(cmd):
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language='ru-RU').lower()
-        if any(a in voice for a in opts['alias']):
+        if any(a in voice for a in rep.opts['alias']):
             cmd_text = voice
-            for a in opts['alias']:
+            for a in rep.opts['alias']:
                 cmd_text = cmd_text.replace(a, '').strip()
-            for t in opts['tbr']:
+            for t in rep.opts['tbr']:
                 cmd_text = cmd_text.replace(t, '').strip()
 
             cmd = recognize_cmd(cmd_text)
