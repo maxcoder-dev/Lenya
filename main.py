@@ -227,8 +227,8 @@ def execute_cmd(cmd):
                 if not full_text:
                     speak('Документ пустой.')
                     return
-
-                speak('Начинаю чтение документа.')
+                rand_replic_docx_real = random.choice(rep.rand_replic_docx) 
+                speak(rand_replic_docx_real)
                 time.sleep(0.5)
 
                 for paragraph in full_text:
@@ -243,8 +243,34 @@ def execute_cmd(cmd):
 
         read_word_file()    #вызываем функцию
 
+learned_cmds = {}
+
+def execute_cmd(cmd, cmd_text=None):
+    global learned_cmds
+
+    if cmd == 'learn':
+        speak('Хорошо, введи в терминал на какую реплику мне реагировать: ')
+        replic_new = input("Введи свою будущую реплику: ").strip().lower()
+        command_new = input("А теперь введи, какой exe файл нужно открыть (полный путь): ").strip()
+
+        learned_cmds[replic_new] = command_new
+        speak("Хорошо, я запомнил")
+        return  # 👈 добавляем return, чтобы дальше не шло
+
+    elif cmd_text is not None:
+        text = str(cmd_text).lower()
+        for phrase, program_path in learned_cmds.items():
+            if phrase in text:
+                speak(f"Хорошо, открываю {phrase}")
+                os.system(f'"{program_path}"')
+                return
+
+        speak('Команда не распознана')
+
     else:
         speak('Команда не распознана')
+
+
 
 # ==============================
 # Обработка звука
